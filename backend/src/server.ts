@@ -1,7 +1,9 @@
 import express from "express";
-import axios from 'axios';
+import axios from "axios";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 const port = 8000;
 
 app.get('/api/images', async (req, res) => {
@@ -12,7 +14,6 @@ app.get('/api/images', async (req, res) => {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        console.log(response.data);
         res.json(response.data.items);
     } catch (error) {
         console.error('Error fetching data from Flickr:', error);
