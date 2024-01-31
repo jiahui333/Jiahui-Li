@@ -1,44 +1,28 @@
-"use client"
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Header from "./_components/Header";
-import ImagesDisplay from './_components/ImagesDisplay';
+import Search from '@/app/_components/Search';
+import Nav from '@/app/_components/Nav';
+import ImagesDisplay from '@/app/_components/ImagesDisplay';
+import { Suspense } from 'react';
+import Loading from './loading';
 
-type FlickrImage = {
-  media: {
-    m: string;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
   };
-  title: string;
-}
-
-export default function Home() {
-  const [images, setImages] = useState<FlickrImage[]>([]);
-  const [searchTags, setSearchTags] = useState<string>('');
-
-  useEffect(() => {
-    fetchImages(searchTags);
-  }, []);
-
-  const fetchImages = async (searchTags: string) => {
-    const response = await axios.get(`http://localhost:8000/api/images?tags=${searchTags}`);
-    setImages(response.data);
-    console.log(response.data)
-  };
-
-  const handleSearch = async (e:React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await fetchImages(searchTags);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
-    setSearchTags(e.target.value) 
-  }
+}) {
+  const query = searchParams?.query || '';
 
   return (
     <div>
-      <Header searchTags={searchTags} handleSearch={handleSearch} handleInputChange={handleInputChange}/>
+      <header className="bg-right-top h-72" style={{ backgroundImage: "url('/top-background.jpg')" }}>
+        <Nav />
+        <Search />
+      </header>
       <main className='p-16'>
-        <ImagesDisplay images={images}/>
+        <Suspense key={query} fallback={<Loading />}>
+          <ImagesDisplay query={query}/>
+        </Suspense>
       </main>
     </div>
   );

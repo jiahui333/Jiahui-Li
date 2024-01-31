@@ -5,11 +5,24 @@ type FlickrImage = {
     title: string;
   }
 
-type ImagesDisplayProps = {
-    images: FlickrImage[];
-}
+export default async function ImagesDisplay({
+  query,
+}: {
+  query: string;
+}) {
 
-const ImagesDisplay = ({images}: ImagesDisplayProps) => {
+  async function getImages() {
+    const res = await fetch(`http://localhost:8000/api/images?tags=${query}`)
+  
+    if (!res.ok) {
+      throw new Error('Failed to fetch data')
+    }
+   
+    return res.json()
+  }
+  
+  const images:FlickrImage[] = await getImages();
+   
   return (
     <div className="lg:columns-4 md:columns-3 sm:columns-2">
       {/* Use index as key because the data does not contain a unique id itself */}
@@ -24,5 +37,3 @@ const ImagesDisplay = ({images}: ImagesDisplayProps) => {
   </div>
   )
 }
-
-export default ImagesDisplay;
